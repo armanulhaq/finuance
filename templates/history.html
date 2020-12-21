@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Log In
+{% endblock %}
+
+{% block main %}
+
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Stock</th>
+        <th scope="col">Price</th>
+        <th scope="col">Shares</th>
+        <th scope="col">Time</th>
+      </tr>
+
+    </thead>
+    <tbody>
+    {% for history in histories %}
+      <tr>
+        <td>{{ history["symbol"] }}</td>
+        <td>{{ history["price"] }}</td>
+        <td>{{ history["shares"] }}{{ ' ' }}{{ '🔼' if history["shares"] > 0 else '🔽' }}</td>
+        <td>{{ strftime("%a, %d %b, %l:%M:%S %p", strptime(history["time"], "%Y-%m-%d %H:%M:%S")) }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
