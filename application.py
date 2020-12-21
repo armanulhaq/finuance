@@ -115,9 +115,9 @@ def history():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """Log user in"""
-    if request.method == "POST":
-        # Forget any user_id
-        session.clear()
+
+    # Forget any user_id
+    session.clear()
 
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
