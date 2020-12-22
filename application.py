@@ -223,9 +223,29 @@ def sell():
             final_cash = initial_cash[0]['cash'] + cash_earned
             db.execute("UPDATE users SET cash = ? WHERE id = ?", final_cash, session["user_id"])
             db.execute("UPDATE portfolio SET shares = ? WHERE user_id = ? AND symbol = ?", updated_shares, session["user_id"], stock_symbol)
-            db.execute("INSERT INTO history (user_id, symbol, price, shares) VALUES (?, ?, ?, ?)",session['user_id'], stock_symbol, stock_price, -int(stock_shares))
+            db.execute("INSERT INTO history (user_id, symbol, price, shares) VALUES (?, ?, ?, ?)",session["user_id"], stock_symbol, stock_price, -int(stock_shares))
             return redirect('/')
 
+
+@app.route("/changepassword", methods=["GET", "POST"])
+@login_required
+def change():
+    if request.method == 'GET':
+        return render_template("change_password.html")
+    else:
+        old_password = request.form.get("old-password")
+        users = db.execute("SELECT hash FROM users WHERE id = ?", session["user_id"])
+        correct_password_hash = users[0]["hash"]
+
+        new_password = request.form.get("newpassword")
+        confirm_password = request.form.get("confirm_password")
+        new_password_hash = generate_password_hash(new_password)
+
+        if check_password_hash(correct_password_hash, old_password) and new_password == confirm_password:
+            db.execute("UPDATE users SET hash = ? WHERE id = ?", new_password_hash, session["user_id"])
+            return redirect("/login")
+        else:
+            return apology("Passwords don't match")
 
 def errorhandler(e):
     """Handle error"""
