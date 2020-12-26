@@ -5,10 +5,62 @@
 {% endblock %}
 
 {% block main %}
-    <form action="/quote" method="post">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Price</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <form>
         <div class="form-group">
             <input autocomplete="off" autofocus class="form-control" name="symbol" placeholder="Enter share name" type="text">
         </div>
-        <button class="btn btn-primary" type="submit">Search</button>
+        <button class="btn btn-primary" type="submit" id="submit">Search</button>
     </form>
+
+    <script>
+        document.querySelector('form').onsubmit = async function onSubmit(event) {
+            event.preventDefault();
+            const loader = document.querySelector('#loader');
+            const submit = document.querySelector('#submit');
+            submit.innerText = 'Fetching...';
+            submit.disabled = true;
+            loader.style.display = 'block';
+
+            try {
+                const tbody = document.querySelector('tbody');
+                tbody.innerHTML = '';
+                const r = await fetch(`/api/quote?symbol=${event.target.elements[0].value}`);
+                data = await r.json();
+
+                const tr = document.createElement('tr');
+
+                ['name', 'price'].forEach(col => {
+                    const td = document.createElement('td');
+                    td.innerText = data[col];
+                    tr.appendChild(td);
+                })
+
+                tbody.appendChild(tr);
+                submit.classList.add('btn-success');
+                submit.innerText = 'Done!';
+            } catch(e) {
+                submit.classList.add('btn-danger');
+                submit.innerText = 'Failed!';
+            }
+            submit.disabled = false;
+            loader.style.display = 'none';
+            setTimeout(() => {
+                submit.classList.remove('btn-success');
+                submit.classList.remove('btn-danger');
+                submit.classList.add('btn-primary');
+                submit.innerText = 'Search';
+            }, 2000);
+        }
+    </script>
 {% endblock %}
