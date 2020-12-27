@@ -5,13 +5,60 @@
 {% endblock %}
 
 {% block main %}
-    <form action="/sell" method="post">
+    <form>
         <div class="form-group">
             <input autocomplete="off" autofocus class="form-control" name="stock" placeholder="Stock" type="text">
         </div>
         <div class="form-group">
             <input class="form-control" name="shares" placeholder="Shares" type="number" min="1" required>
         </div>
-        <button class="btn btn-primary" type="submit">Sell</button>
+        <button class="btn btn-primary" type="submit" id="submit">Sell</button>
     </form>
+
+    <script>
+        document.querySelector('form').onsubmit = async function onSubmit(event) {
+            event.preventDefault();
+            const loader = document.querySelector('#loader');
+            const submit = document.querySelector('#submit');
+
+            submit.classList.add('btn-primary');
+            submit.innerText = 'Selling...';
+            submit.disabled = true;
+            loader.style.display = 'block';
+
+            data = {};
+            try {
+                const r = await fetch('/api/sell', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        symbol: event.target.elements[0].value,
+                        shares: event.target.elements[1].value
+                    }),
+                });
+                data = await r.json();
+
+                if (data.success) {
+                    submit.classList.add('btn-success');
+                    submit.innerText = 'Done!';
+                }
+            } finally {
+                if (!data.success) {
+                    submit.classList.add('btn-danger');
+                    submit.innerText = 'Failed!';
+                    alert(data.message);
+                }
+                submit.disabled = false;
+                loader.style.display = 'none';
+            }
+            setTimeout(() => {
+                submit.classList.remove('btn-success');
+                submit.classList.remove('btn-danger');
+                submit.classList.add('btn-primary');
+                submit.innerText = 'Sell';
+            }, 2000);
+        }
+    </script>
 {% endblock %}
