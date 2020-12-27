@@ -147,9 +147,8 @@ def sell_api():
         return apology("Invalid stock symbol")
     elif stock_shares == None or stock_shares == '' or int(stock_shares) < 1:
         return apology("Invalid stock count")
-    
     elif int(stock_shares) > stock_count:
-        return apology("you dont have enough shares")
+        return apology("You don't have enough shares")
     else:
         stock = lookup(stock_symbol)
         stock_price = stock["price"]

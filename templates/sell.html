@@ -20,6 +20,7 @@
             event.preventDefault();
             const loader = document.querySelector('#loader');
             const submit = document.querySelector('#submit');
+            const alertBox = document.querySelector('.alert');
 
             submit.classList.add('btn-primary');
             submit.innerText = 'Selling...';
@@ -48,7 +49,8 @@
                 if (!data.success) {
                     submit.classList.add('btn-danger');
                     submit.innerText = 'Failed!';
-                    alert(data.message);
+                    alertBox.style.display = 'block';
+                    alertBox.innerText = data.message;
                 }
                 submit.disabled = false;
                 loader.style.display = 'none';
@@ -58,6 +60,8 @@
                 submit.classList.remove('btn-danger');
                 submit.classList.add('btn-primary');
                 submit.innerText = 'Sell';
+                alertBox.style.display = 'none';
+                alertBox.innerText = '';
             }, 2000);
         }
     </script>

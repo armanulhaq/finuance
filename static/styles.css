@@ -46,6 +46,10 @@ main img
     max-width: 100%;
 }
 
+.alert {
+    display: none;
+}
+
 #loader {
     display: none;
     position: absolute;
