@@ -1,5 +1,6 @@
 cs50
-Flask
+Flask==1.1.4
 Flask-Session
+markupsafe==2.0.1
 requests
 gunicorn
